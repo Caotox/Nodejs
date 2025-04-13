@@ -2,6 +2,10 @@ import { Routes, Route, Link, useNavigate } from 'react-router-dom';
 import Login from './auth/Login';
 import Signup from './auth/Signup';
 import Comments from './components/Comments';
+import React from 'react';
+import NewIssueForm from './NewIssueForm';
+import IssuesPage from './IssuesPage';
+import MapView from './MapView';
 
 function App() {
   const navigate = useNavigate();
