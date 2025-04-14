@@ -6,6 +6,8 @@ import React from 'react';
 import NewIssueForm from './NewIssueForm';
 import IssuesPage from './IssuesPage';
 import MapView from './MapView';
+import './index.css';
+
 
 function App() {
   const navigate = useNavigate();
