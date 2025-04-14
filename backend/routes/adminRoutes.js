@@ -46,4 +46,48 @@ router.delete('/comments/:id', auth, isAdmin, async (req, res) => {
   res.json({ message: 'Comment deleted' });
 });
 
+
+
+
+
+
+
+
+//Modif Titouan
+// backend/routes/adminRoutes.js
+// Ajouter la route de résolution
+router.patch('/issues/:id/resolve', auth, isAdmin, async (req, res) => {
+  try {
+    const issue = await Issue.findByPk(req.params.id);
+    if (!issue) return res.status(404).json({ error: 'Problème non trouvé' });
+
+    await issue.update({ status: 'resolved' });
+    
+    // Envoyer l'email de notification
+    const [user] = await db.execute('SELECT email FROM users WHERE id = ?', [issue.createdBy]);
+    if (user[0]?.email) {
+      await sendEmail(
+        user[0].email,
+        'Votre signalement a été résolu',
+        `Le problème "${issue.title}" a été marqué comme résolu. Merci pour votre contribution !`
+      );
+    }
+
+    res.json({ message: 'Problème résolu', issue });
+  } catch (error) {
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
 module.exports = router;
