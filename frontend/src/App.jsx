@@ -3,6 +3,8 @@ import Login from './auth/Login';
 import Signup from './auth/Signup';
 import Comments from './components/Comments';
 import AdminDashboard from './components/AdminDashboard';
+import IssuesPage from './components/IssuesPage';
+import { io } from 'socket.io-client';
 import './index.css';
 
 function App() {
@@ -32,4 +34,22 @@ function App() {
     </div>
   );
 }
+
+// pr websocket
+const App = () => {
+  const [socket, setSocket] = useState(null);
+
+  useEffect(() => {
+    const s = io('http://localhost:3000');
+    setSocket(s);
+    return () => s.disconnect();
+  }, []);
+
+  return (
+    <div>
+      <IssuesPage socket={socket} />
+    </div>
+  );
+};
+//websocket DONE DONE DONE
 export default App;
