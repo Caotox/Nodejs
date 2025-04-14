@@ -43,6 +43,38 @@ export default function Comments() {
     <div>
       <h2>Commentaires</h2>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <div className="vote-section">
+  <button onClick={handleVote} disabled={hasVoted}>
+    👍 {votesCount} {hasVoted ? '(Déjà voté)' : ''}
+  </button>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       {isAuthenticated ? (
         <>
           <input
@@ -65,3 +97,34 @@ export default function Comments() {
     </div>
   );
 }
+
+
+
+// -------------------------- Titouan --------------------------------
+
+const [votesCount, setVotesCount] = useState(issue.votes_count);
+const [hasVoted, setHasVoted] = useState(false);
+
+useEffect(() => {
+  const checkVote = async () => {
+    const response = await axios.get(`/api/votes/${issue.id}/check`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+    });
+    setHasVoted(response.data.hasVoted);
+  };
+  checkVote();
+}, [issue.id]);
+
+const handleVote = async () => {
+  try {
+    await axios.post(`/api/votes/${issue.id}/vote`, {}, {
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+    });
+    setVotesCount(votesCount + 1);
+    setHasVoted(true);
+  } catch (error) {
+    console.error('Erreur de vote:', error);
+  }
+};
+
+// ------------------------------------------
