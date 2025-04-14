@@ -34,6 +34,21 @@ router.post('/:id/vote', authMiddleware, async (req, res) => {
   }
 });
 
+// Ajouter cette nouvelle route avant module.exports
+router.get('/:id/check', authMiddleware, async (req, res) => {
+    try {
+      const [vote] = await db.query(
+        'SELECT * FROM votes WHERE user_id = ? AND issue_id = ?',
+        [req.user.id, req.params.id]
+      );
+      
+      res.status(200).json({ hasVoted: vote.length > 0 });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Erreur de vérification du vote' });
+    }
+  });
+
 module.exports = router;
 
 // ---------------------------------

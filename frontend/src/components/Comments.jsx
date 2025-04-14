@@ -105,15 +105,23 @@ export default function Comments() {
 const [votesCount, setVotesCount] = useState(issue.votes_count);
 const [hasVoted, setHasVoted] = useState(false);
 
+// Remplacer le useEffect par cette version sécurisée
 useEffect(() => {
   const checkVote = async () => {
-    const response = await axios.get(`/api/votes/${issue.id}/check`, {
-      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-    });
-    setHasVoted(response.data.hasVoted);
+    try {
+      const response = await axios.get(`/api/votes/${issue.id}/check`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      setHasVoted(response.data.hasVoted);
+    } catch (error) {
+      console.error('Erreur de vérification du vote:', error);
+    }
   };
-  checkVote();
-}, [issue.id]);
+  
+  if (issue && issue.id) {
+    checkVote();
+  }
+}, [issue?.id]); // Utilisation de l'opérateur optionnel
 
 const handleVote = async () => {
   try {
