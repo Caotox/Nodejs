@@ -10,7 +10,7 @@ import './index.css';
 
 
 //Modif Titouan
-import AdminDashboard from './components/AdminDashboard';
+//import AdminDashboard from './components/AdminDashboard';
 import AdminIssueList from './components/AdminIssueList';
 
 
