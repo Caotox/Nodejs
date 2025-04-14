@@ -1,6 +1,13 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
+// ----------------------- Titouan ----------------------------
+
+import React, { useEffect, useState } from 'react';
+import { Table, Button, notification } from 'antd';
+
+// ---------------------------------------------------
+
 export default function AdminDashboard() {
   const [users, setUsers] = useState([]);
   const [comments, setComments] = useState([]);
@@ -67,3 +74,48 @@ export default function AdminDashboard() {
     </div>
   );
 }
+
+// -------------------------------- Titouan ----------------------------
+
+const AdminDashboard = () => {
+  const [issues, setIssues] = useState([]);
+
+  useEffect(() => {
+      fetch('/api/admin/issues', {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      })
+      .then(res => res.json())
+      .then(data => setIssues(data));
+  }, []);
+
+  const resolveIssue = async (id) => {
+      try {
+          await fetch(`/api/issues/${id}/resolve`, {
+              method: 'PATCH',
+              headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+          });
+          notification.success({ message: 'Problème marqué comme résolu' });
+          setIssues(issues.filter(issue => issue.id !== id));
+      } catch (error) {
+          notification.error({ message: 'Erreur lors de la résolution' });
+      }
+  };
+
+  const columns = [
+      { title: 'Titre', dataIndex: 'title' },
+      { title: 'Description', dataIndex: 'description' },
+      { title: 'Votes', dataIndex: 'Votes', render: votes => votes.length },
+      {
+          title: 'Actions',
+          render: (_, record) => (
+              <Button onClick={() => resolveIssue(record.id)}>
+                  Marquer comme résolu
+              </Button>
+          )
+      }
+  ];
+
+  return <Table dataSource={issues} columns={columns} />;
+};
+
+// ------------------------------------------

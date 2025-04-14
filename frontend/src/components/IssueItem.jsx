@@ -1,5 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 
+// ---------------------- Titouan ---------------
+
+import VoteButton from './VoteButton';
+
+// -----------------------------------
+
 export default function IssueItem({ issue }) {
   const navigate = useNavigate();
   
@@ -17,3 +23,16 @@ export default function IssueItem({ issue }) {
     </div>
   );
 }
+
+
+// --------------------- Titouan ----------------
+
+const IssueItem = ({ issue }) => (
+  <div className="issue-card">
+      <h3>{issue.title}</h3>
+      <VoteButton issueId={issue.id} />
+      {/* ... reste du code existant ... */}
+  </div>
+);
+
+// ---------------------------------
