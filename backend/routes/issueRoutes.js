@@ -3,6 +3,30 @@ const router = express.Router();
 const Issue = require('../models/Issue');
 const { authMiddleware } = require('../middleware/auth');
 
+//Modif Titouan
+import express from 'express';
+import { checkIssueStatus } from '../middleware/issueMiddleware.js';
+import { authMiddleware } from '../middleware/auth.js';
+
+// Utilisation correcte avec la chaine middleware
+router.post(
+    '/:id/vote',
+    authMiddleware,    // Middleware d'authentification
+    checkIssueStatus,  // Middleware de vérification
+    async (req, res) => {
+        // Logique du contrôleur ici
+        try {
+            // Utilise req.issue déjà chargé par le middleware
+            const updatedIssue = await req.issue.increment('votes');
+            res.json({ votes: updatedIssue.votes });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Erreur de vote' });
+        }
+    }
+);
+
+
 router.post('/', authMiddleware, async (req, res) => {
   try {
     const { title, description, photo, latitude, longitude } = req.body;
