@@ -29,10 +29,10 @@ CREATE TABLE votes (
   user_id INT NOT NULL,
   issue_id INT NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES users(id),
-  FOREIGN KEY (issue_id) REFERENCES issues(id),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (issue_id) REFERENCES issues(id) ON DELETE CASCADE,
   UNIQUE KEY unique_vote (user_id, issue_id)
-);
+) ENGINE=InnoDB;
 
 ALTER TABLE issues
 ADD COLUMN status ENUM('open', 'resolved') DEFAULT 'open',
