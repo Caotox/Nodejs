@@ -101,7 +101,7 @@ export default function Comments() {
 
 
 // -------------------------- Titouan --------------------------------
-
+/*
 const [votesCount, setVotesCount] = useState(issue.votes_count);
 const [hasVoted, setHasVoted] = useState(false);
 
@@ -134,5 +134,5 @@ const handleVote = async () => {
     console.error('Erreur de vote:', error);
   }
 };
-
+*/
 // ------------------------------------------

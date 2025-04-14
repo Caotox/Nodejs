@@ -22,6 +22,21 @@ REFERENCES users(id)
 ON DELETE CASCADE;
 
 
+-- Jessica 
+CREATE TABLE issues (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  description TEXT NOT NULL,
+  photo VARCHAR(255) NOT NULL,
+  thumbnail VARCHAR(255) NOT NULL,
+  latitude DOUBLE NOT NULL,
+  longitude DOUBLE NOT NULL,
+  status ENUM('open', 'resolved') DEFAULT 'open',
+  user_id INT NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
 
 -- Requêtes à ajouter à db.md Titouan
 CREATE TABLE votes (

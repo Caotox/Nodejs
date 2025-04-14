@@ -64,7 +64,7 @@ export default function AdminDashboard() {
           </li>
         ))}
       </ul>
-
+/*
 { // -------------------------- Titouan ---------------
 
 issues.map(issue => (
