@@ -1,13 +1,4 @@
 require('dotenv').config();
-
-// ------------------------ Titouan ----------------------------
-
-const sgMail = require('@sendgrid/mail');
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-
-// -----------------------------------------
-
-
 const express = require('express');
 const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
@@ -22,13 +13,4 @@ app.use('/auth', authRoutes);
 app.use('/issues', commentRoutes);
 app.use('/admin', adminRoutes);
 
-// ------------------- Titouan -----------------------
-
-app.use('/api', adminRoutes);
-
-// ---------------------------------------------
-
 app.listen(3001, () => console.log('Backend running on http://localhost:3001'));
-
-
-
