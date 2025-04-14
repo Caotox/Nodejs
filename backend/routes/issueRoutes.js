@@ -53,3 +53,19 @@ router.get('/', async (req, res) => {
       return res.status(500).json({ message: 'Erreur serveur' });
     }
   });
+
+
+  router.get('/', async (req, res) => {
+    const { status, sort } = req.query;
+    const order = [];
+  
+    if (sort === 'votes') order.push(['votes', 'DESC']);
+    if (sort === 'date') order.push(['createdAt', 'DESC']);
+  
+    const issues = await Issue.findAll({
+      where: { status: status || 'open' },
+      order
+    });
+    
+    res.json(issues);
+  });

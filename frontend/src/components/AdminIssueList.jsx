@@ -45,3 +45,32 @@ export default function AdminIssueList() {
     </div>
   );
 }
+
+
+
+//Modif Titouan
+const [sortBy, setSortBy] = useState('date');
+
+const fetchIssues = async () => {
+  const res = await axios.get(`http://localhost:3001/issues?sort=${sortBy}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  setIssues(res.data);
+};
+
+// Dans le JSX
+<select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+  <option value="date">Trier par date</option>
+  <option value="votes">Trier par votes</option>
+</select>
+
+
+useEffect(() => {
+    const socket = io('http://localhost:3001');
+    
+    socket.on('issue:resolved', (issueId) => {
+      setIssues(prev => prev.filter(issue => issue.id !== issueId));
+    });
+  
+    return () => socket.disconnect();
+  }, []);
