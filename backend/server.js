@@ -17,14 +17,3 @@ app.listen(3001, () => console.log('Backend running on http://localhost:3001'));
 
 
 
-//Modif Titouan
-const { Server } = require('socket.io');
-const io = new Server(server);
-
-io.on('connection', (socket) => {
-  console.log('Client connecté');
-});
-
-// Dans la route de résolution
-await issue.update({ status: 'resolved' });
-io.emit('issue:resolved', issue.id);
