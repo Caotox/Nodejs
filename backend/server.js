@@ -7,7 +7,7 @@ const adminRoutes = require('./routes/adminRoutes');
 
 // --------------- Titouan --------------
 const voteRoutes = require('./routes/voteRoutes');
-const adminRoutes = require('./routes/adminRoutes');
+//const adminRoutes = require('./routes/adminRoutes');
 // ----------------------------
 
 const app = express();
