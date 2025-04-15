@@ -11,5 +11,10 @@ puis
 
 
 2. Frontend :
+```
 npm install axios react-router-dom
+```
+puis
+```
 npm install react-leaflet leaflet
+```
