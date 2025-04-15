@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Routes, Route, Link, useNavigate } from 'react-router-dom';
 import Login from './auth/Login';
 import Signup from './auth/Signup';
@@ -10,7 +11,12 @@ import './index.css';
 function App() {
   const navigate = useNavigate();
 
-  //pr websocket
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('role');
+    navigate('/login');
+  };
+
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
@@ -24,13 +30,6 @@ function App() {
       <IssuesPage socket={socket} />
     </div>
   );
-  //fin websocket
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('role');
-    navigate('/login');
-  };
 
   return (
     <div>
@@ -38,10 +37,12 @@ function App() {
         <Link to="/login">Login</Link> | 
         <Link to="/signup">Signup</Link> | 
         <Link to="/issues/1/comments">Voir commentaires</Link> | 
+        <Link to="/admin">Admin</Link> | 
         <button onClick={handleLogout}>Déconnexion</button>
       </nav>
 
       <Routes>
+        <Route path="/" element={<IssuesPage socket={socket} />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/issues/:id/comments" element={<Comments />} />
