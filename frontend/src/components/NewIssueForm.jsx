@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import './Form.css';
+//import './Form.css';
 
 const NewIssueForm = ({ onSuccess }) => {
   const [form, setForm] = useState({ title: '', description: '', latitude: '', longitude: '', photo: null });
