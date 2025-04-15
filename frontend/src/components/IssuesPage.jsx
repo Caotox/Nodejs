@@ -1,24 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import MapView from './MapView';
 import NewIssueForm from './NewIssueForm';
 
-const IssuesPage = () => {
+const IssuesPage = ({ socket }) => {
   const [issues, setIssues] = useState([]);
 
-  const fetchIssues = async () => {
-    const res = await axios.get('/api/issues');
-    setIssues(res.data);
-  };
-
   useEffect(() => {
-    fetchIssues();
-  }, []);
+    if (!socket) return;
+
+    socket.on('issue:new', (newIssue) => {
+      setIssues((prevIssues) => [...prevIssues, newIssue]);
+    });
+
+    return () => {
+      socket.off('issue:new');
+    };
+  }, [socket]);
 
   return (
     <div>
       <h2>Signaler un problème</h2>
-      <NewIssueForm onSuccess={fetchIssues} />
+      <NewIssueForm />
       <h2>Carte des problèmes</h2>
       <MapView issues={issues} />
     </div>

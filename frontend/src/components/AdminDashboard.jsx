@@ -20,7 +20,7 @@ export default function AdminDashboard() {
       headers: { Authorization: `Bearer ${token}` }
     }).then(res => setComments(res.data));
   };
-
+  /* truc de titou qui marche pas
   useEffect(() => {
     const fetchIssues = async () => {
       try {
@@ -34,7 +34,7 @@ export default function AdminDashboard() {
     };
 
     fetchIssues();
-  }, []);
+  }, []); */
 
   const deleteComment = async (id) => {
     await axios.delete(`http://localhost:3001/admin/comments/${id}`, {
