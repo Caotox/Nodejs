@@ -47,6 +47,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/issues/:id/comments" element={<Comments />} />
         <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/" element={<IssuesPage socket={socket} />} />
       </Routes>
     </div>
   );

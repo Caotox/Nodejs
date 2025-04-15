@@ -4,6 +4,7 @@ import axios from 'axios';
 export default function AdminDashboard() {
   const [users, setUsers] = useState([]);
   const [comments, setComments] = useState([]);
+  const [issues, setIssues] = useState([]);
   const token = localStorage.getItem('token');
 
   useEffect(() => {
@@ -20,6 +21,21 @@ export default function AdminDashboard() {
     }).then(res => setComments(res.data));
   };
 
+  useEffect(() => {
+    const fetchIssues = async () => {
+      try {
+        const response = await axios.get('/api/admin/issues', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setIssues(response.data);
+      } catch (error) {
+        console.error('Erreur de récupération des problèmes:', error);
+      }
+    };
+
+    fetchIssues();
+  }, []);
+
   const deleteComment = async (id) => {
     await axios.delete(`http://localhost:3001/admin/comments/${id}`, {
       headers: { Authorization: `Bearer ${token}` }
@@ -34,6 +50,19 @@ export default function AdminDashboard() {
       });
       setUsers(users.filter(u => u.id !== id));
       setComments(comments.filter(c => c.user_id !== id));
+    }
+  };
+
+  const handleResolveIssue = async (issueId) => {
+    try {
+      await axios.patch(`/api/admin/issues/${issueId}/resolve`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setIssues(issues.map(issue =>
+        issue.id === issueId ? { ...issue, status: 'resolved' } : issue
+      ));
+    } catch (error) {
+      console.error('Erreur de résolution:', error);
     }
   };
 
@@ -64,59 +93,22 @@ export default function AdminDashboard() {
           </li>
         ))}
       </ul>
-/*
-{ // -------------------------- Titouan ---------------
-
-issues.map(issue => (
-  <div key={issue.id} className="issue-card">
-    <h3>{issue.title}</h3>
-    <p>Signalé par: {issue.username}</p>
-    <p>Votes: {issue.votes_count}</p>
-    <button 
-      onClick={() => handleResolveIssue(issue.id)}
-      disabled={issue.status === 'resolved'}
-    >
-      {issue.status === 'resolved' ? 'Résolu' : 'Marquer comme résolu'}
-    </button>
-  </div>
-))
- // ------------------ Fin (jusqu au div en dessous) --------------------
-}
-</div>
-
+      <h2>📍 Problèmes signalés</h2>
+      <div>
+        {issues.map(issue => (
+          <div key={issue.id} className="issue-card">
+            <h3>{issue.title}</h3>
+            <p>Signalé par: {issue.username}</p>
+            <p>Votes: {issue.votes_count}</p>
+            <button
+              onClick={() => handleResolveIssue(issue.id)}
+              disabled={issue.status === 'resolved'}
+            >
+              {issue.status === 'resolved' ? 'Résolu' : 'Marquer comme résolu'}
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
-
-
-// ----------------------------- Titouan -------------------------
-
-const [issues, setIssues] = useState([]);
-
-useEffect(() => {
-  const fetchIssues = async () => {
-    try {
-      const response = await axios.get('/api/admin/issues', {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-      });
-      setIssues(response.data);
-    } catch (error) {
-      console.error('Erreur de récupération des problèmes:', error);
-    }
-  };
-  fetchIssues();
-}, []);
-
-const handleResolveIssue = async (issueId) => {
-  try {
-    await axios.patch(`/api/admin/issues/${issueId}/resolve`, {}, {
-      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-    });
-    setIssues(issues.map(issue => 
-      issue.id === issueId ? {...issue, status: 'resolved'} : issue
-    ));
-  } catch (error) {
-    console.error('Erreur de résolution:', error);
-  }
-};
-
-// ---------------------------------------
