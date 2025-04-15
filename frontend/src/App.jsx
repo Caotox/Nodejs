@@ -25,14 +25,10 @@ function App() {
     return () => s.disconnect();
   }, []);
 
-  return (
-    <div>
-      <IssuesPage socket={socket} />
-    </div>
-  );
 
   return (
     <div>
+      <IssuesPage socket={socket} />
       <nav>
         <Link to="/login">Login</Link> | 
         <Link to="/signup">Signup</Link> | 
