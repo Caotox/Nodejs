@@ -19,22 +19,11 @@ export default function AdminDashboard() {
     axios.get('http://localhost:3001/admin/comments', {
       headers: { Authorization: `Bearer ${token}` }
     }).then(res => setComments(res.data));
-  };
-  /* truc de titou qui marche pas
-  useEffect(() => {
-    const fetchIssues = async () => {
-      try {
-        const response = await axios.get('/api/admin/issues', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setIssues(response.data);
-      } catch (error) {
-        console.error('Erreur de récupération des problèmes:', error);
-      }
-    };
 
-    fetchIssues();
-  }, []); */
+    axios.get('http://localhost:3001/api/issues', {
+      headers: { Authorization: `Bearer ${token}` }
+    }).then(res => setIssues(res.data));
+  };
 
   const deleteComment = async (id) => {
     await axios.delete(`http://localhost:3001/admin/comments/${id}`, {
@@ -53,17 +42,20 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleResolveIssue = async (issueId) => {
-    try {
-      await axios.patch(`/api/admin/issues/${issueId}/resolve`, {}, {
+  const deleteIssue = async (id) => {
+    if (window.confirm("Confirmer la suppression de ce signalement ?")) {
+      await axios.delete(`http://localhost:3001/api/issues/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setIssues(issues.map(issue =>
-        issue.id === issueId ? { ...issue, status: 'resolved' } : issue
-      ));
-    } catch (error) {
-      console.error('Erreur de résolution:', error);
+      setIssues(issues.filter(i => i.id !== id));
     }
+  };
+
+  const resolveIssue = async (id) => {
+    await axios.put(`http://localhost:3001/api/issues/${id}/resolve`, {}, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    setIssues(issues.map(i => i.id === id ? { ...i, resolved: 1 } : i));
   };
 
   return (
@@ -93,22 +85,6 @@ export default function AdminDashboard() {
           </li>
         ))}
       </ul>
-      <h2>📍 Problèmes signalés</h2>
-      <div>
-        {issues.map(issue => (
-          <div key={issue.id} className="issue-card">
-            <h3>{issue.title}</h3>
-            <p>Signalé par: {issue.username}</p>
-            <p>Votes: {issue.votes_count}</p>
-            <button
-              onClick={() => handleResolveIssue(issue.id)}
-              disabled={issue.status === 'resolved'}
-            >
-              {issue.status === 'resolved' ? 'Résolu' : 'Marquer comme résolu'}
-            </button>
-          </div>
-        ))}
-      </div>
     </div>
   );
 }

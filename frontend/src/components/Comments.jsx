@@ -1,80 +1,46 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
-export default function Comments() {
-  const { id } = useParams();
+export default function Comments({ issueId }) {
   const [comments, setComments] = useState([]);
   const [content, setContent] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    setIsAuthenticated(!!token);
+    setIsAuthenticated(!!localStorage.getItem('token'));
+    fetchComments();
+  }, [issueId]);
 
-    axios.get(`http://localhost:3001/issues/${id}/comments`)
-      .then(res => setComments(res.data))
-      .catch(err => console.error("Erreur récupération commentaires :", err));
-  }, [id]);
+  const fetchComments = async () => {
+    try {
+      const res = await axios.get(`http://localhost:3001/issues/${issueId}/comments`);
+      setComments(res.data);
+    } catch (err) {
+      console.error("Erreur récupération commentaires :", err);
+    }
+  };
 
   const addComment = async () => {
     const token = localStorage.getItem('token');
-    if (!token) {
-      alert("Vous devez être connecté pour commenter.");
-      return;
-    }
+    if (!token) return alert("Vous devez être connecté pour commenter.");
 
     try {
       await axios.post(
-        `http://localhost:3001/issues/${id}/comments`,
+        `http://localhost:3001/issues/${issueId}/comments`,
         { content },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
       setComments([{ content, name: 'Vous', created_at: new Date().toISOString() }, ...comments]);
       setContent('');
     } catch (err) {
-      console.error("Erreur ajout commentaire :", err.response?.data || err);
+      console.error("Erreur ajout commentaire :", err);
       alert("Erreur lors de l'ajout du commentaire.");
     }
   };
 
   return (
-    <div>
-      <h2>Commentaires</h2>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <div className="vote-section">
-  <button onClick={handleVote} disabled={hasVoted}>
-    👍 {votesCount} {hasVoted ? '(Déjà voté)' : ''}
-  </button>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    <div style={{ marginTop: "10px" }}>
+      <h4>Commentaires</h4>
       {isAuthenticated ? (
         <>
           <input
@@ -85,7 +51,7 @@ export default function Comments() {
           <button onClick={addComment}>Envoyer</button>
         </>
       ) : (
-        <p>Connectez-vous pour ajouter un commentaire.</p>
+        <p>Connectez-vous pour commenter.</p>
       )}
 
       {comments.map((c, i) => (
@@ -97,42 +63,3 @@ export default function Comments() {
     </div>
   );
 }
-
-
-
-// -------------------------- Titouan --------------------------------
-/*
-const [votesCount, setVotesCount] = useState(issue.votes_count);
-const [hasVoted, setHasVoted] = useState(false);
-
-// Remplacer le useEffect par cette version sécurisée
-useEffect(() => {
-  const checkVote = async () => {
-    try {
-      const response = await axios.get(`/api/votes/${issue.id}/check`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-      });
-      setHasVoted(response.data.hasVoted);
-    } catch (error) {
-      console.error('Erreur de vérification du vote:', error);
-    }
-  };
-  
-  if (issue && issue.id) {
-    checkVote();
-  }
-}, [issue?.id]); // Utilisation de l'opérateur optionnel
-
-const handleVote = async () => {
-  try {
-    await axios.post(`/api/votes/${issue.id}/vote`, {}, {
-      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-    });
-    setVotesCount(votesCount + 1);
-    setHasVoted(true);
-  } catch (error) {
-    console.error('Erreur de vote:', error);
-  }
-};
-*/
-// ------------------------------------------

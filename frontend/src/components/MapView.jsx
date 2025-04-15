@@ -5,7 +5,7 @@ import L from 'leaflet';
 
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
-import "../styles/Form.css";
+//import "../styles/Form.css";
 
 
 let DefaultIcon = L.icon({
@@ -29,7 +29,7 @@ const MapView = ({ issues }) => {
         >
           <Popup>
             <strong>{issue.title}</strong><br />
-            <img src={issue.thumbnail} alt="thumb" width="100" />
+            <img src={`http://localhost:3001${issue.thumbnail}`} alt="thumb" width="200" /><br />
           </Popup>
         </Marker>
       ))}

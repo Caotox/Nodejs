@@ -1,40 +1,52 @@
 require('dotenv').config();
 const express = require('express');
+const app = express();
+const http = require('http');
 const cors = require('cors');
-const http = require("http");
-const { Server } = require("socket.io");
+const server = http.createServer(app); // nécessaire pour socket.io
+const { Server } = require('socket.io');
+const io = new Server(server, {
+  cors: {
+    origin: 'http://localhost:5173',
+    methods: ['GET', 'POST'],
+  },
+});
+
+// middleware pour attacher io à chaque requête
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+});
+// /backend/server.js
+const issueRoutes = require('./routes/issueRoutes');
+app.use('/api/issues', issueRoutes);
 
 const authRoutes = require('./routes/authRoutes');
 const commentRoutes = require('./routes/commentRoutes');
 const adminRoutes = require('./routes/adminRoutes');
-const issueRoutes = require("./routes/issueRoutes"); //jess
-const voteRoutes = require('./routes/voteRoutes');
+const adminIssueRoutes = require('./routes/adminIssueRoutes');
 
-// Crée l'application Express AVANT de créer le serveur HTTP
-const app = express();
-
-// Création du serveur HTTP à partir de l'app express
-const server = http.createServer(app);
-
-// Configuration de socket.io
-const io = new Server(server, { cors: { origin: "*" } });
-
-// Middlewares
 app.use(cors());
 app.use(express.json());
+app.use('/uploads', express.static('uploads'));
 
-// Routes
 app.use('/auth', authRoutes);
 app.use('/issues', commentRoutes);
 app.use('/admin', adminRoutes);
-app.use("/api", issueRoutes); //jess
-app.use('/api/votes', voteRoutes);
-// app.use('/api/admin', adminRoutes); // redondant avec '/admin' ? À vérifier
+app.use('/api/comments', commentRoutes);
+app.use('/api/admin/issues', adminIssueRoutes);
+app.use('/api', issueRoutes); // issues route
+//app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// socket.io écoute les connexions
+io.on('connection', (socket) => {
+  console.log('✅ Socket.io : un client est connecté');
 
-// WebSocket
-io.on("connection", (socket) => {
-    console.log("Client connecté au WebSocket");
+  socket.on('disconnect', () => {
+    console.log('❌ Socket.io : client déconnecté');
+  });
 });
 
-// Démarrage du serveur
-server.listen(3001, () => console.log('Backend running on http://localhost:3001'));
+const PORT = process.env.PORT || 3001;
+server.listen(PORT, () => {
+  console.log(`🚀 Server listening on http://localhost:${PORT}`);
+});
