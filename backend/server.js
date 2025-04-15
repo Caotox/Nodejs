@@ -29,7 +29,7 @@ app.use('/issues', commentRoutes);
 app.use('/admin', adminRoutes);
 app.use("/api", issueRoutes); //jess
 app.use('/api/votes', voteRoutes);
-app.use('/api/admin', adminRoutes); // redondant avec '/admin' ? À vérifier
+// app.use('/api/admin', adminRoutes); // redondant avec '/admin' ? À vérifier
 
 // WebSocket
 io.on("connection", (socket) => {

@@ -20,7 +20,7 @@ function App() {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    const s = io('http://localhost:3000');
+    const s = io('http://localhost:3001');
     setSocket(s);
     return () => s.disconnect();
   }, []);
