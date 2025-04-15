@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Routes, Route, Link, useNavigate } from 'react-router-dom';
 import Login from './auth/Login';
 import Signup from './auth/Signup';
@@ -9,35 +10,13 @@ import './index.css';
 
 function App() {
   const navigate = useNavigate();
+  const [socket, setSocket] = useState(null);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('role');
     navigate('/login');
   };
-
-  return (
-    <div>
-      <nav>
-        <Link to="/login">Login</Link> | 
-        <Link to="/signup">Signup</Link> | 
-        <Link to="/issues/1/comments">Voir commentaires</Link> | 
-        <button onClick={handleLogout}>Déconnexion</button>
-      </nav>
-
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/issues/:id/comments" element={<Comments />} />
-        <Route path="/admin" element={<AdminDashboard />} />
-      </Routes>
-    </div>
-  );
-}
-
-// pr websocket
-const App = () => {
-  const [socket, setSocket] = useState(null);
 
   useEffect(() => {
     const s = io('http://localhost:3000');
@@ -47,9 +26,23 @@ const App = () => {
 
   return (
     <div>
-      <IssuesPage socket={socket} />
+      <nav>
+        <Link to="/login">Login</Link> | 
+        <Link to="/signup">Signup</Link> | 
+        <Link to="/issues/1/comments">Voir commentaires</Link> | 
+        <Link to="/admin">Admin</Link> | 
+        <button onClick={handleLogout}>Déconnexion</button>
+      </nav>
+
+      <Routes>
+        <Route path="/" element={<IssuesPage socket={socket} />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/issues/:id/comments" element={<Comments />} />
+        <Route path="/admin" element={<AdminDashboard />} />
+      </Routes>
     </div>
   );
-};
-//websocket DONE DONE DONE
+}
+
 export default App;
