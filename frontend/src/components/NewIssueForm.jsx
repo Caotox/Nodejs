@@ -45,7 +45,6 @@ const NewIssueForm = ({ onSuccess }) => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <h2>Signaler un problème</h2>
       <input name="title" value={form.title} onChange={handleChange} placeholder="Titre" required />
       <textarea name="description" value={form.description} onChange={handleChange} placeholder="Description" required />
       <input type="file" accept="image/*" onChange={handlePhoto} required />

@@ -13,7 +13,7 @@ export default function Comments({ issueId }) {
 
   const fetchComments = async () => {
     try {
-      const res = await axios.get(`http://localhost:3001/issues/${issueId}/comments`);
+      const res = await axios.get(`http://localhost:3001/api/issues/${issueId}/comments`);
       setComments(res.data);
     } catch (err) {
       console.error("Erreur récupération commentaires :", err);
@@ -26,7 +26,7 @@ export default function Comments({ issueId }) {
 
     try {
       await axios.post(
-        `http://localhost:3001/issues/${issueId}/comments`,
+        `http://localhost:3001/api/issues/${issueId}/comments`,
         { content },
         { headers: { Authorization: `Bearer ${token}` } }
       );

@@ -4,7 +4,7 @@ const auth = require('../middleware/authMiddleware');
 const router = express.Router();
 
 // Ajouter un commentaire (protégé par authMiddleware)
-router.post('/:id/comments', auth, async (req, res) => {
+router.post('/issues/:id/comments', auth, async (req, res) => {
   console.log("POST /comments -> user:", req.user);
   const { content } = req.body;
   const issueId = req.params.id;
@@ -19,7 +19,7 @@ router.post('/:id/comments', auth, async (req, res) => {
 });
 
 // Voir les commentaires d’un problème (accessible à tous)
-router.get('/:id/comments', async (req, res) => {
+router.get('/issues/:id/comments', async (req, res) => {
   const issueId = req.params.id;
   const [rows] = await db.execute(`
     SELECT comments.content, comments.created_at, users.name 

@@ -7,9 +7,7 @@ const sharp = require("sharp");
 const path = require("path");
 const fs = require("fs");
 const db = require('../models/db');
-const auth = require('../middleware/authMiddleware');
-
-const { checkAdmin } = require('../middleware/roleMiddleware');
+//const { checkAdmin } = require('../middleware/roleMiddleware');
 
 const uploadDir = path.join(__dirname, "../uploads/original");
 const thumbDir = path.join(__dirname, "../uploads/thumbs");
@@ -33,26 +31,31 @@ const upload = multer({
   },
   limits: { fileSize: 5 * 1024 * 1024 },
 });
-  router.put('/:id/resolve', authenticate, checkAdmin, async (req, res) => {
-    try {
-      const updated = await Issue.update({ resolved: true }, { where: { id: req.params.id } });
-      if (updated[0] === 0) return res.status(404).json({ message: 'Issue non trouvée' });
-      res.json({ message: 'Issue marquée comme résolue' });
-    } catch (err) {
-      res.status(500).json({ message: 'Erreur serveur' });
-    }
-  });
-  
-  router.delete('/:id', authenticate, checkAdmin, async (req, res) => {
-    try {
-      const deleted = await Issue.destroy({ where: { id: req.params.id } });
-      if (deleted === 0) return res.status(404).json({ message: 'Issue non trouvée' });
-      res.json({ message: 'Issue supprimée' });
-    } catch (err) {
-      res.status(500).json({ message: 'Erreur serveur' });
-    }
-  });
-  
+
+/*
+// Marquer une issue comme résolue
+router.put('/:id/resolve', authenticate, checkAdmin, async (req, res) => {
+  try {
+    const updated = await Issue.update({ resolved: true }, { where: { id: req.params.id } });
+    if (updated[0] === 0) return res.status(404).json({ message: 'Issue non trouvée' });
+    res.json({ message: 'Issue marquée comme résolue' });
+  } catch (err) {
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
+// Supprimer une issue
+router.delete('/:id', authenticate, checkAdmin, async (req, res) => {
+  try {
+    const deleted = await Issue.destroy({ where: { id: req.params.id } });
+    if (deleted === 0) return res.status(404).json({ message: 'Issue non trouvée' });
+    res.json({ message: 'Issue supprimée' });
+  } catch (err) {
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+*/
+// Créer une nouvelle issue
 router.post("/issues", authenticate, upload.single("photo"), async (req, res) => {
   try {
     const { title, description, latitude, longitude } = req.body;
@@ -85,14 +88,19 @@ router.post("/issues", authenticate, upload.single("photo"), async (req, res) =>
     res.status(500).json({ error: "Server error" });
   }
 });
-router.post('/issues/:id/upvote', auth, async (req, res) => {
-    const issueId = req.params.id;
-    await db.execute(
-      `UPDATE issues SET upvotes = IFNULL(upvotes, 0) + 1 WHERE id = ?`,
-      [issueId]
-    );
-    res.json({ message: 'Upvoted!' });
-  });
+
+  
+// Upvote une issue
+router.post('/issues/:id/upvote', authenticate, async (req, res) => {
+  const issueId = req.params.id;
+  await db.execute(
+    `UPDATE issues SET upvotes = IFNULL(upvotes, 0) + 1 WHERE id = ?`,
+    [issueId]
+  );
+  res.json({ message: 'Upvoted!' });
+});
+
+// Obtenir toutes les issues
 router.get("/issues", async (req, res) => {
   try {
     const issues = await Issue.getAll(req.query);
@@ -103,6 +111,7 @@ router.get("/issues", async (req, res) => {
   }
 });
 
+// Obtenir une issue par ID
 router.get("/issues/:id", async (req, res) => {
   try {
     const issue = await Issue.getById(req.params.id);

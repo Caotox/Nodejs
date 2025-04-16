@@ -19,8 +19,8 @@ export default function Login() {
       if (res.data.user.role === 'admin') {
         navigate('/admin');
       } else {
-        navigate('/issues/1/comments');
-      }
+        navigate('/issues');
+      }      
     } catch (err) {
       console.error(err.response?.data?.error || err.message);
       setError('Identifiants invalides. Veuillez réessayer.');

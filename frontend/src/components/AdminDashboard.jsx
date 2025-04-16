@@ -12,11 +12,11 @@ export default function AdminDashboard() {
   }, []);
 
   const fetchData = () => {
-    axios.get('http://localhost:3001/admin/users', {
+    axios.get('http://localhost:3001/api/users', {
       headers: { Authorization: `Bearer ${token}` }
     }).then(res => setUsers(res.data));
 
-    axios.get('http://localhost:3001/admin/comments', {
+    axios.get('http://localhost:3001/api/comments', {
       headers: { Authorization: `Bearer ${token}` }
     }).then(res => setComments(res.data));
 
@@ -26,7 +26,7 @@ export default function AdminDashboard() {
   };
 
   const deleteComment = async (id) => {
-    await axios.delete(`http://localhost:3001/admin/comments/${id}`, {
+    await axios.delete(`http://localhost:3001/api/comments/${id}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     setComments(comments.filter(c => c.id !== id));
@@ -34,7 +34,7 @@ export default function AdminDashboard() {
 
   const deleteUser = async (id) => {
     if (window.confirm('Confirmer la suppression de cet utilisateur ?')) {
-      await axios.delete(`http://localhost:3001/admin/users/${id}`, {
+      await axios.delete(`http://localhost:3001/api/users/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setUsers(users.filter(u => u.id !== id));
@@ -52,7 +52,7 @@ export default function AdminDashboard() {
   };
 
   const resolveIssue = async (id) => {
-    await axios.put(`http://localhost:3001/api/issues/${id}/resolve`, {}, {
+    await axios.put(`http://localhost:3001/issues/${id}/resolve`, {}, {
       headers: { Authorization: `Bearer ${token}` }
     });
     setIssues(issues.map(i => i.id === id ? { ...i, resolved: 1 } : i));
@@ -85,6 +85,8 @@ export default function AdminDashboard() {
           </li>
         ))}
       </ul>
+
+      
     </div>
   );
 }
