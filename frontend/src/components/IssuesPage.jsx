@@ -3,11 +3,12 @@ import axios from 'axios';
 import MapView from './MapView';
 import NewIssueForm from './NewIssueForm';
 import Comments from '../components/Comments';
-//import './IssuePage.css';
 
 const IssuesPage = ({ socket }) => {
   const [issues, setIssues] = useState([]);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     setIsAuthenticated(!!localStorage.getItem('token'));
@@ -24,10 +25,19 @@ const IssuesPage = ({ socket }) => {
 
   const fetchIssues = async () => {
     try {
+      setLoading(true);
       const res = await axios.get('http://localhost:3001/api/issues');
-      setIssues(res.data);
+      
+      // Always set issues to an array, even if response is empty
+      const issuesData = Array.isArray(res.data) ? res.data : [];
+      setIssues(issuesData);
+      setError(null);
     } catch (err) {
       console.error('Erreur de chargement des issues :', err);
+      setError("Erreur lors du chargement des problèmes");
+      setIssues([]); // Réinitialiser à un tableau vide
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -50,18 +60,38 @@ const IssuesPage = ({ socket }) => {
       <h2>Signaler un problème</h2>
       {isAuthenticated ? <NewIssueForm onSuccess={fetchIssues} /> : <p>Connectez-vous pour signaler un problème.</p>}
 
-      <div className="issues-list">
-        {issues.map(issue => (
-          <div className="issue-card" key={issue.id}>
-            <h3>{issue.title}</h3>
-            <img src={`http://localhost:3001${issue.thumbnail}`} width="200" />
-            <p>{issue.description}</p>
-            <p><strong>Votes :</strong> {issue.upvotes || 0}</p>
-            <button onClick={() => handleUpvote(issue.id)}>👍 Voter</button>
-            <Comments issueId={issue.id} />
-          </div>
-        ))}
-      </div>
+      {loading ? (
+        <div>Chargement en cours...</div>
+      ) : error ? (
+        <div className="error-section">
+          <div className="error">{error}</div>
+          <p>Vous pouvez toujours soumettre un nouveau problème ci-dessus.</p>
+        </div>
+      ) : (
+        <div className="issues-list">
+          <h2>Problèmes signalés</h2>
+          {issues.length > 0 ? (
+            issues.map(issue => (
+              <div className="issue-card" key={issue.id}>
+                <h3>{issue.title}</h3>
+                {issue.thumbnail && (
+                  <img 
+                    src={`http://localhost:3001${issue.thumbnail}`} 
+                    width="200" 
+                    alt={`Illustration de ${issue.title}`}
+                  />
+                )}
+                <p>{issue.description}</p>
+                <p><strong>Votes :</strong> {issue.upvotes || 0}</p>
+                <button onClick={() => handleUpvote(issue.id)}>👍 Voter</button>
+                <Comments issueId={issue.id} />
+              </div>
+            ))
+          ) : (
+            <p>Aucun problème signalé pour le moment</p>
+          )}
+        </div>
+      )}
 
       <h2>Carte des problèmes</h2>
       <MapView issues={issues} />

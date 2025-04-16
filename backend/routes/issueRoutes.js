@@ -32,31 +32,8 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 },
 });
 
-/*
-// Marquer une issue comme résolue
-router.put('/:id/resolve', authenticate, checkAdmin, async (req, res) => {
-  try {
-    const updated = await Issue.update({ resolved: true }, { where: { id: req.params.id } });
-    if (updated[0] === 0) return res.status(404).json({ message: 'Issue non trouvée' });
-    res.json({ message: 'Issue marquée comme résolue' });
-  } catch (err) {
-    res.status(500).json({ message: 'Erreur serveur' });
-  }
-});
-
-// Supprimer une issue
-router.delete('/:id', authenticate, checkAdmin, async (req, res) => {
-  try {
-    const deleted = await Issue.destroy({ where: { id: req.params.id } });
-    if (deleted === 0) return res.status(404).json({ message: 'Issue non trouvée' });
-    res.json({ message: 'Issue supprimée' });
-  } catch (err) {
-    res.status(500).json({ message: 'Erreur serveur' });
-  }
-});
-*/
 // Créer une nouvelle issue
-router.post("/issues", authenticate, upload.single("photo"), async (req, res) => {
+router.post("/", authenticate, upload.single("photo"), async (req, res) => {
   try {
     const { title, description, latitude, longitude } = req.body;
     if (!title || !description || !latitude || !longitude || !req.file) {
@@ -89,30 +66,35 @@ router.post("/issues", authenticate, upload.single("photo"), async (req, res) =>
   }
 });
 
-  
-// Upvote une issue
-router.post('/issues/:id/upvote', authenticate, async (req, res) => {
-  const issueId = req.params.id;
-  await db.execute(
-    `UPDATE issues SET upvotes = IFNULL(upvotes, 0) + 1 WHERE id = ?`,
-    [issueId]
-  );
-  res.json({ message: 'Upvoted!' });
+// Obtenir toutes les issues
+router.get("/", async (req, res) => {
+  try {
+    // Using direct DB query since there might be an issue with the model
+    const [issues] = await db.execute('SELECT * FROM issues');
+    res.json(issues || []); // Always return an array, even if empty
+  } catch (err) {
+    console.error(err);
+    res.status(500).json([]); // Return empty array on error
+  }
 });
 
-// Obtenir toutes les issues
-router.get("/issues", async (req, res) => {
+// Upvote une issue
+router.post('/:id/upvote', authenticate, async (req, res) => {
+  const issueId = req.params.id;
   try {
-    const issues = await Issue.getAll(req.query);
-    if (!issues.length) return res.status(204).send();
-    res.status(200).json(issues);
+    await db.execute(
+      `UPDATE issues SET upvotes = IFNULL(upvotes, 0) + 1 WHERE id = ?`,
+      [issueId]
+    );
+    res.json({ message: 'Upvoted!' });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: "Server error" });
   }
 });
 
 // Obtenir une issue par ID
-router.get("/issues/:id", async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const issue = await Issue.getById(req.params.id);
     if (!issue) return res.status(404).json({ error: "Not found" });

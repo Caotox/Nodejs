@@ -60,7 +60,7 @@ export default function AdminDashboard() {
 
   return (
     <div>
-      <h2>👤 Utilisateurs</h2>
+      <h2>Utilisateurs</h2>
       <ul>
         {users.map(u => (
           <li key={u.id}>
@@ -74,7 +74,7 @@ export default function AdminDashboard() {
         ))}
       </ul>
 
-      <h2>💬 Commentaires</h2>
+      <h2>Commentaires</h2>
       <ul>
         {comments.map(c => (
           <li key={c.id}>
