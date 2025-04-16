@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const authenticate = require('../middleware/authMiddleware');
 const { checkAdmin } = require('../middleware/roleMiddleware');
-const db = require('../models/db'); // à adapter si ton fichier est ailleurs
+const db = require('../models/db'); 
 
 // Obtenir toutes les issues
 router.get('/', authenticate, checkAdmin, (req, res) => {

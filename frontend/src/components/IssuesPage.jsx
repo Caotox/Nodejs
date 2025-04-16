@@ -13,13 +13,11 @@ const IssuesPage = ({ socket }) => {
   useEffect(() => {
     setIsAuthenticated(!!localStorage.getItem('token'));
     fetchIssues();
-
     if (socket) {
       socket.on('issue:new', (newIssue) => {
         setIssues((prev) => [...prev, newIssue]);
       });
     }
-
     return () => socket?.off('issue:new');
   }, [socket]);
 
@@ -27,15 +25,13 @@ const IssuesPage = ({ socket }) => {
     try {
       setLoading(true);
       const res = await axios.get('http://localhost:3001/api/issues');
-      
-      // Always set issues to an array, even if response is empty
       const issuesData = Array.isArray(res.data) ? res.data : [];
       setIssues(issuesData);
       setError(null);
     } catch (err) {
       console.error('Erreur de chargement des issues :', err);
       setError("Erreur lors du chargement des problèmes");
-      setIssues([]); // Réinitialiser à un tableau vide
+      setIssues([]); 
     } finally {
       setLoading(false);
     }
@@ -44,7 +40,6 @@ const IssuesPage = ({ socket }) => {
   const handleUpvote = async (id) => {
     const token = localStorage.getItem('token');
     if (!token) return alert("Connectez-vous pour voter.");
-
     try {
       await axios.post(`http://localhost:3001/api/issues/${id}/upvote`, {}, {
         headers: { Authorization: `Bearer ${token}` },
@@ -59,7 +54,7 @@ const IssuesPage = ({ socket }) => {
     <div className="issues-page">
       <h2>Signaler un problème</h2>
       {isAuthenticated ? <NewIssueForm onSuccess={fetchIssues} /> : <p>Connectez-vous pour signaler un problème.</p>}
-
+      
       {loading ? (
         <div>Chargement en cours...</div>
       ) : error ? (
@@ -75,9 +70,9 @@ const IssuesPage = ({ socket }) => {
               <div className="issue-card" key={issue.id}>
                 <h3>{issue.title}</h3>
                 {issue.thumbnail && (
-                  <img 
-                    src={`http://localhost:3001${issue.thumbnail}`} 
-                    width="200" 
+                  <img
+                    src={`http://localhost:3001${issue.thumbnail}`}
+                    width="200"
                     alt={`Illustration de ${issue.title}`}
                   />
                 )}
@@ -92,7 +87,7 @@ const IssuesPage = ({ socket }) => {
           )}
         </div>
       )}
-
+      
       <h2>Carte des problèmes</h2>
       <MapView issues={issues} />
     </div>

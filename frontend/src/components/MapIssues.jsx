@@ -1,4 +1,3 @@
-// frontend/src/pages/MapIssues.jsx
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';

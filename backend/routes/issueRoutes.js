@@ -69,12 +69,11 @@ router.post("/", authenticate, upload.single("photo"), async (req, res) => {
 // Obtenir toutes les issues
 router.get("/", async (req, res) => {
   try {
-    // Using direct DB query since there might be an issue with the model
     const [issues] = await db.execute('SELECT * FROM issues');
-    res.json(issues || []); // Always return an array, even if empty
+    res.json(issues || []); 
   } catch (err) {
     console.error(err);
-    res.status(500).json([]); // Return empty array on error
+    res.status(500).json([]); 
   }
 });
 

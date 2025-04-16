@@ -5,7 +5,6 @@ const http = require('http');
 const cors = require('cors');
 const server = http.createServer(app);
 const { Server } = require('socket.io');
-
 const io = new Server(server, {
   cors: {
     origin: 'http://localhost:5173',
@@ -31,15 +30,14 @@ const adminRoutes = require('./routes/adminRoutes');
 const adminIssueRoutes = require('./routes/adminIssuesRoutes');
 
 app.use('/auth', authRoutes);
-app.use('/api/', commentRoutes);
-app.use('/api/', issueRoutes);
-app.use('/api/', adminRoutes);
-app.use('/api/', adminIssueRoutes);
+app.use('/api/issues', issueRoutes); 
+app.use('/api', commentRoutes);
+app.use('/api', adminRoutes);
+app.use('/api', adminIssueRoutes);
 
 // Socket.io
 io.on('connection', (socket) => {
   console.log('✅ Socket.io : un client est connecté');
-
   socket.on('disconnect', () => {
     console.log('❌ Socket.io : client déconnecté');
   });
