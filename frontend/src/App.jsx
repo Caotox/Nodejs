@@ -9,6 +9,7 @@ import { io } from 'socket.io-client';
 import './index.css';
 import 'leaflet/dist/leaflet.css';
 import MapIssues from './components/MapIssues'; 
+import './App.css';
 
 
 
